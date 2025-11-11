@@ -1,6 +1,4 @@
 from datetime import timedelta, datetime
-from logging import raiseExceptions
-
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import SECRET_KEY, ALGORITHM
 from app.database.models import UserProfile, RefreshToken
@@ -128,6 +126,18 @@ async def delete_user(user_id: int, db:Session = Depends(get_db)):
     db.delete(user_db)
     db.commit()
     return {"message": "User deleted"}
+
+
+@user_router.post('/refresh')
+async def refresh(refresh_token: str, db:Session = Depends(get_db)):
+    token_db = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
+
+    if not token_db:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    access_token = create_access_token({"sub": token_db.id})
+
+    return {'access_token': access_token, 'token_type': 'bearer'}
 
 
 

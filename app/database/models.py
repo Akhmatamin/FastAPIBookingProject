@@ -29,6 +29,9 @@ class Country(Base):
     country_hotel : Mapped[List['Hotel']] = relationship('Hotel',back_populates='hotel_country',
                                                         cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return f'{self.name}'
+
 class UserProfile(Base):
     __tablename__ = "user_profile"
 
@@ -55,6 +58,9 @@ class UserProfile(Base):
                                                         cascade="all, delete-orphan")
     user_token: Mapped[List['RefreshToken']] = relationship('RefreshToken', back_populates='token_user',
                                                              cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f'{self.first_name, self.last_name}'
 
 
 class RefreshToken(Base):
